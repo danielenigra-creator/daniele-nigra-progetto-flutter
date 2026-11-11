@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'app.dart';
+import 'state/collection_store.dart';
 
-void main() {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(const DiscotecaApp());
+  final store = CollectionStore();
+  await store.load(); // ripristina libreria e lista salvate
+  runApp(DiscotecaApp(store: store));
 }

@@ -1,4 +1,4 @@
-import '../models/album.dart';
+/*import '../models/album.dart';
 
 const sampleLibrary = <Album>[
   Album(id: 'rumours', title: 'Rumours', artist: 'Fleetwood Mac', year: 1977, format: 'Vinile', genre: 'Rock', coverColor: 'cream'),
@@ -20,3 +20,4 @@ const searchAlbums = <Album>[
   Album(id: 'blue-train', title: 'Blue Train', artist: 'John Coltrane', year: 1957, format: 'Vinile', genre: 'Jazz'),
   Album(id: 'lorde-ep', title: 'The Love Club EP', artist: 'Lorde', year: 2013, format: 'CD', genre: 'Pop'),
 ];
+*/

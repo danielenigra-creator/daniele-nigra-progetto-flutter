@@ -1,17 +1,26 @@
-# flutter_application_1
+# Discoteca
 
-A new Flutter project.
+App Flutter per gestire la propria collezione di dischi (vinili e CD) e la lista dei dischi
+da cercare al mercatino. I dati dei dischi arrivano dall'API pubblica di **Discogs**.
 
-## Getting Started
+## Funzioni
+- **Cerca**: ricerca per album/artista su Discogs (filtro Vinile/CD), con loading, errori e "Riprova".
+- **Dettaglio**: cover, info e tracklist del disco; aggiunta a Libreria o a Da cercare.
+- **Libreria**: i dischi che possiedi, con ricerca e filtro per formato (tieni premuto per rimuovere).
+- **Da cercare**: la lista del mercatino; "TROVATO!" sposta il disco in libreria (swipe per rimuovere).
+- Libreria e lista sono salvate sul dispositivo (SharedPreferences).
 
-This project is a starting point for a Flutter application.
+## Endpoint Discogs usati
+- `GET https://api.discogs.com/database/search?q=...&type=release&format=...` (serve il token)
+- `GET https://api.discogs.com/releases/{id}`
 
-A few resources to get you started if this is your first Flutter project:
+## Configurazione (obbligatoria per la ricerca)
+1. Crea un token su discogs.com → Settings → Developers → *Generate new token*.
+2. Avvia l'app passando il token (non committarlo su Git):
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
+```
+flutter pub get
+flutter run --dart-define=DISCOGS_TOKEN=il_tuo_token
+```
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Test: `flutter test`
