@@ -24,14 +24,21 @@ class DiscogsService {
   static const _timeout = Duration(seconds: 15);
 
   Map<String, String> get _headers => {
-        'User-Agent': AppConfig.userAgent,
-        'Accept': 'application/json',
-        if (AppConfig.hasToken) 'Authorization': 'Discogs token=${AppConfig.discogsToken}',
-      };
+    'User-Agent': AppConfig.userAgent,
+    'Accept': 'application/json',
+    if (AppConfig.hasToken)
+      'Authorization': 'Discogs token=${AppConfig.discogsToken}',
+  };
 
   /// GET /database/search (richiede autenticazione).
   /// [format] può essere 'Vinyl', 'CD' o null (tutti).
-  Future<List<Album>> searchReleases(String query, {String? format}) async {
+  /// [field] è il parametro Discogs da usare: 'q' (tutto), 'artist',
+  /// 'release_title', 'label', 'year', 'genre'.
+  Future<List<Album>> searchReleases(
+    String query, {
+    String? format,
+    String field = 'q',
+  }) async {
     final q = query.trim();
     if (q.isEmpty) return [];
     if (!AppConfig.hasToken) {
@@ -41,10 +48,14 @@ class DiscogsService {
     }
 
     final json = await _get('/database/search', {
-      'q': q,
+      field: q,
       'type': 'release',
-      'per_page': '25',
-      if (format != null) 'format': format,
+      'per_page': '50',
+      if (format != null) ...{
+        'format': format,
+        'sort': 'have',
+        'sort_order': 'desc',
+      },
     });
 
     final results = json['results'];
@@ -61,10 +72,15 @@ class DiscogsService {
     return ReleaseDetail.fromJson(json);
   }
 
-  Future<Map<String, dynamic>> _get(String path, [Map<String, String>? params]) async {
+  Future<Map<String, dynamic>> _get(
+    String path, [
+    Map<String, String>? params,
+  ]) async {
     final uri = Uri.https(_host, path, params);
     try {
-      final response = await _client.get(uri, headers: _headers).timeout(_timeout);
+      final response = await _client
+          .get(uri, headers: _headers)
+          .timeout(_timeout);
 
       if (response.statusCode == 401) {
         throw const DiscogsException('Token Discogs non valido o scaduto.');

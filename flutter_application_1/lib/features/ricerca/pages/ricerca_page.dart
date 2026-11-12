@@ -1,5 +1,7 @@
 import 'dart:async';
+
 import 'package:flutter/material.dart';
+
 import '../../../core/config.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../models/album.dart';
@@ -18,11 +20,31 @@ class RicercaPage extends StatefulWidget {
 }
 
 class _RicercaPageState extends State<RicercaPage> {
+  // Etichetta del pulsante -> parametro di Discogs
+  static const Map<String, String> _fields = {
+    'TUTTO': 'q',
+    'ARTISTA': 'artist',
+    'TITOLO': 'release_title',
+    'ETICHETTA': 'label',
+    'ANNO': 'year',
+    'GENERE': 'genre',
+  };
+
   // Etichetta del filtro -> valore del parametro `format` di Discogs
   static const Map<String, String?> _formats = {
     'TUTTI': null,
     'VINILE': 'Vinyl',
     'CD': 'CD',
+    'CASSETTA': 'Cassette',
+  };
+
+  static const Map<String, String> _hints = {
+    'TUTTO': 'Cerca un album o un artista…',
+    'ARTISTA': 'Nome dell\'artista…',
+    'TITOLO': 'Titolo dell\'album…',
+    'ETICHETTA': 'Etichetta discografica…',
+    'ANNO': 'Anno (es. 1991)…',
+    'GENERE': 'Genere (es. Rock, Jazz)…',
   };
 
   final _service = DiscogsService();
@@ -30,6 +52,7 @@ class _RicercaPageState extends State<RicercaPage> {
   Timer? _debounce;
   int _requestId = 0; // ignora le risposte di ricerche ormai superate
 
+  String _field = 'TUTTO';
   String _format = 'TUTTI';
   List<Album> _results = [];
   bool _loading = false;
@@ -67,7 +90,11 @@ class _RicercaPageState extends State<RicercaPage> {
     });
 
     try {
-      final results = await _service.searchReleases(query, format: _formats[_format]);
+      final results = await _service.searchReleases(
+        query,
+        format: _formats[_format],
+        field: _fields[_field]!,
+      );
       if (!mounted || id != _requestId) return;
       setState(() {
         _results = results;
@@ -76,7 +103,9 @@ class _RicercaPageState extends State<RicercaPage> {
     } catch (e) {
       if (!mounted || id != _requestId) return;
       setState(() {
-        _error = e is DiscogsException ? e.message : 'Errore imprevisto. Riprova.';
+        _error = e is DiscogsException
+            ? e.message
+            : 'Errore imprevisto. Riprova.';
         _loading = false;
       });
     }
@@ -86,7 +115,42 @@ class _RicercaPageState extends State<RicercaPage> {
     widget.store.addToWanted(album);
     ScaffoldMessenger.of(context)
       ..hideCurrentSnackBar()
-      ..showSnackBar(SnackBar(content: Text('✓ «${album.title}» aggiunto a Da cercare')));
+      ..showSnackBar(
+        SnackBar(content: Text('✓ «${album.title}» aggiunto a Da cercare')),
+      );
+  }
+
+  /// Riga di pulsanti a scelta singola.
+  Widget _chips(
+    List<String> labels,
+    String selected,
+    ValueChanged<String> onSelected,
+  ) {
+    return Wrap(
+      spacing: 8,
+      runSpacing: 6,
+      children: labels.map((label) {
+        final isSelected = selected == label;
+        return ChoiceChip(
+          label: Text(
+            label,
+            style: const TextStyle(fontSize: 10, letterSpacing: 1),
+          ),
+          selected: isSelected,
+          onSelected: (_) => onSelected(label),
+          selectedColor: AppColors.amber,
+          backgroundColor: AppColors.panelLight,
+          labelStyle: TextStyle(
+            color: isSelected ? AppColors.brownText : AppColors.cream,
+          ),
+          side: BorderSide(
+            color: isSelected ? Colors.black : AppColors.border,
+            width: 1.5,
+          ),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+        );
+      }).toList(),
+    );
   }
 
   @override
@@ -101,8 +165,11 @@ class _RicercaPageState extends State<RicercaPage> {
             onChanged: _onChanged,
             onSubmitted: (_) => _runSearch(),
             textInputAction: TextInputAction.search,
+            keyboardType: _field == 'ANNO'
+                ? TextInputType.number
+                : TextInputType.text,
             decoration: InputDecoration(
-              hintText: 'Cerca un album o un artista…',
+              hintText: _hints[_field],
               prefixIcon: const Icon(Icons.search, color: AppColors.muted),
               suffixIcon: IconButton(
                 icon: const Icon(Icons.close, color: AppColors.muted),
@@ -114,25 +181,33 @@ class _RicercaPageState extends State<RicercaPage> {
             ),
           ),
           const SizedBox(height: 10),
-          Wrap(
-            spacing: 8,
-            children: _formats.keys.map((label) {
-              final selected = _format == label;
-              return ChoiceChip(
-                label: Text(label, style: const TextStyle(fontSize: 10, letterSpacing: 1)),
-                selected: selected,
-                onSelected: (_) {
-                  setState(() => _format = label);
-                  _runSearch();
-                },
-                selectedColor: AppColors.amber,
-                backgroundColor: AppColors.panelLight,
-                labelStyle: TextStyle(color: selected ? AppColors.brownText : AppColors.cream),
-                side: BorderSide(color: selected ? Colors.black : AppColors.border, width: 1.5),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
-              );
-            }).toList(),
+          const Text(
+            'CERCA PER',
+            style: TextStyle(
+              color: AppColors.muted,
+              fontSize: 9,
+              letterSpacing: 1,
+            ),
           ),
+          const SizedBox(height: 4),
+          _chips(_fields.keys.toList(), _field, (label) {
+            setState(() => _field = label);
+            _runSearch();
+          }),
+          const SizedBox(height: 10),
+          const Text(
+            'FORMATO',
+            style: TextStyle(
+              color: AppColors.muted,
+              fontSize: 9,
+              letterSpacing: 1,
+            ),
+          ),
+          const SizedBox(height: 4),
+          _chips(_formats.keys.toList(), _format, (label) {
+            setState(() => _format = label);
+            _runSearch();
+          }),
           const SizedBox(height: 10),
           if (!AppConfig.hasToken)
             const Padding(
@@ -153,16 +228,24 @@ class _RicercaPageState extends State<RicercaPage> {
       return const Center(child: CircularProgressIndicator());
     }
     if (_error != null) {
-      return Center(child: ErrorView(message: _error!, onRetry: _runSearch));
+      return Center(
+        child: ErrorView(message: _error!, onRetry: _runSearch),
+      );
     }
     if (_controller.text.trim().isEmpty) {
       return const Center(
-        child: Text('Cerca un disco per iniziare', style: TextStyle(color: AppColors.muted)),
+        child: Text(
+          'Cerca un disco per iniziare',
+          style: TextStyle(color: AppColors.muted),
+        ),
       );
     }
     if (_results.isEmpty) {
       return const Center(
-        child: Text('Nessun risultato', style: TextStyle(color: AppColors.muted)),
+        child: Text(
+          'Nessun risultato',
+          style: TextStyle(color: AppColors.muted),
+        ),
       );
     }
 
@@ -171,8 +254,10 @@ class _RicercaPageState extends State<RicercaPage> {
       builder: (context, _) => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('${_results.length} dischi trovati · fonte: Discogs',
-              style: const TextStyle(color: AppColors.muted, fontSize: 11)),
+          Text(
+            '${_results.length} dischi trovati · fonte: Discogs',
+            style: const TextStyle(color: AppColors.muted, fontSize: 11),
+          ),
           const SizedBox(height: 10),
           Expanded(
             child: ListView.builder(
