@@ -2,6 +2,7 @@ import 'package:flutter_application_1/app.dart';
 import 'package:flutter_application_1/models/album.dart';
 import 'package:flutter_application_1/shared/widgets/bottom_nav_bar.dart';
 import 'package:flutter_application_1/state/collection_store.dart';
+import 'package:flutter_application_1/state/settings_store.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -41,13 +42,18 @@ void main() {
   });
 
   testWidgets('si può navigare tra le tre schermate', (tester) async {
-    await tester.pumpWidget(DiscotecaApp(store: CollectionStore()));
+    final store = CollectionStore();
+    final settings = SettingsStore();
+
+    await tester.pumpWidget(DiscotecaApp(store: store, settings: settings));
 
     expect(find.text('La libreria è vuota'), findsOneWidget);
 
     final nav = find.byType(BottomNavBar);
 
-    await tester.tap(find.descendant(of: nav, matching: find.text('DA CERCARE')));
+    await tester.tap(
+      find.descendant(of: nav, matching: find.text('DA CERCARE')),
+    );
     await tester.pump();
     expect(find.text('Nessun disco in lista'), findsOneWidget);
 

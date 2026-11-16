@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 import '../../../core/config.dart';
+import '../../../core/l10n/strings.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../models/album.dart';
 import '../../../services/discogs_service.dart';
@@ -38,15 +39,6 @@ class _RicercaPageState extends State<RicercaPage> {
     'CASSETTA': 'Cassette',
   };
 
-  static const Map<String, String> _hints = {
-    'TUTTO': 'Cerca un album o un artista…',
-    'ARTISTA': 'Nome dell\'artista…',
-    'TITOLO': 'Titolo dell\'album…',
-    'ETICHETTA': 'Etichetta discografica…',
-    'ANNO': 'Anno (es. 1991)…',
-    'GENERE': 'Genere (es. Rock, Jazz)…',
-  };
-
   final _service = DiscogsService();
   final _controller = TextEditingController();
   Timer? _debounce;
@@ -76,7 +68,7 @@ class _RicercaPageState extends State<RicercaPage> {
       });
       return;
     }
-    _debounce = Timer(const Duration(milliseconds: 500), _runSearch);
+    _debounce = Timer(Duration(milliseconds: 500), _runSearch);
   }
 
   Future<void> _runSearch() async {
@@ -105,7 +97,7 @@ class _RicercaPageState extends State<RicercaPage> {
       setState(() {
         _error = e is DiscogsException
             ? e.message
-            : 'Errore imprevisto. Riprova.';
+            : S.unexpectedErrorRetry;
         _loading = false;
       });
     }
@@ -116,7 +108,7 @@ class _RicercaPageState extends State<RicercaPage> {
     ScaffoldMessenger.of(context)
       ..hideCurrentSnackBar()
       ..showSnackBar(
-        SnackBar(content: Text('✓ «${album.title}» aggiunto a Da cercare')),
+        SnackBar(content: Text(S.addedToWanted(album.title))),
       );
   }
 
@@ -133,8 +125,8 @@ class _RicercaPageState extends State<RicercaPage> {
         final isSelected = selected == label;
         return ChoiceChip(
           label: Text(
-            label,
-            style: const TextStyle(fontSize: 10, letterSpacing: 1),
+            S.chip(label),
+            style: TextStyle(fontSize: 10, letterSpacing: 1),
           ),
           selected: isSelected,
           onSelected: (_) => onSelected(label),
@@ -156,7 +148,7 @@ class _RicercaPageState extends State<RicercaPage> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+      padding: EdgeInsets.fromLTRB(16, 16, 16, 0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -169,10 +161,10 @@ class _RicercaPageState extends State<RicercaPage> {
                 ? TextInputType.number
                 : TextInputType.text,
             decoration: InputDecoration(
-              hintText: _hints[_field],
-              prefixIcon: const Icon(Icons.search, color: AppColors.muted),
+              hintText: S.hint(_field),
+              prefixIcon: Icon(Icons.search, color: AppColors.muted),
               suffixIcon: IconButton(
-                icon: const Icon(Icons.close, color: AppColors.muted),
+                icon: Icon(Icons.close, color: AppColors.muted),
                 onPressed: () {
                   _controller.clear();
                   _onChanged('');
@@ -180,40 +172,40 @@ class _RicercaPageState extends State<RicercaPage> {
               ),
             ),
           ),
-          const SizedBox(height: 10),
-          const Text(
-            'CERCA PER',
+          SizedBox(height: 10),
+          Text(
+            S.searchBy,
             style: TextStyle(
               color: AppColors.muted,
               fontSize: 9,
               letterSpacing: 1,
             ),
           ),
-          const SizedBox(height: 4),
+          SizedBox(height: 4),
           _chips(_fields.keys.toList(), _field, (label) {
             setState(() => _field = label);
             _runSearch();
           }),
-          const SizedBox(height: 10),
-          const Text(
-            'FORMATO',
+          SizedBox(height: 10),
+          Text(
+            S.format,
             style: TextStyle(
               color: AppColors.muted,
               fontSize: 9,
               letterSpacing: 1,
             ),
           ),
-          const SizedBox(height: 4),
+          SizedBox(height: 4),
           _chips(_formats.keys.toList(), _format, (label) {
             setState(() => _format = label);
             _runSearch();
           }),
-          const SizedBox(height: 10),
+          SizedBox(height: 10),
           if (!AppConfig.hasToken)
-            const Padding(
+            Padding(
               padding: EdgeInsets.only(bottom: 8),
               child: Text(
-                'Manca il token Discogs: la ricerca non funzionerà (vedi README).',
+                S.missingToken,
                 style: TextStyle(color: AppColors.amber, fontSize: 11),
               ),
             ),
@@ -225,7 +217,7 @@ class _RicercaPageState extends State<RicercaPage> {
 
   Widget _buildBody() {
     if (_loading) {
-      return const Center(child: CircularProgressIndicator());
+      return Center(child: CircularProgressIndicator());
     }
     if (_error != null) {
       return Center(
@@ -233,17 +225,17 @@ class _RicercaPageState extends State<RicercaPage> {
       );
     }
     if (_controller.text.trim().isEmpty) {
-      return const Center(
+      return Center(
         child: Text(
-          'Cerca un disco per iniziare',
+          S.searchToStart,
           style: TextStyle(color: AppColors.muted),
         ),
       );
     }
     if (_results.isEmpty) {
-      return const Center(
+      return Center(
         child: Text(
-          'Nessun risultato',
+          S.noResults,
           style: TextStyle(color: AppColors.muted),
         ),
       );
@@ -255,10 +247,10 @@ class _RicercaPageState extends State<RicercaPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            '${_results.length} dischi trovati · fonte: Discogs',
-            style: const TextStyle(color: AppColors.muted, fontSize: 11),
+            S.resultsFound(_results.length),
+            style: TextStyle(color: AppColors.muted, fontSize: 11),
           ),
-          const SizedBox(height: 10),
+          SizedBox(height: 10),
           Expanded(
             child: ListView.builder(
               itemCount: _results.length,

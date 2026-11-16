@@ -1,3 +1,5 @@
+import '../core/l10n/strings.dart';
+
 /// Un disco (release Discogs) salvato in libreria o nella lista "da cercare".
 class Album {
   final String id; // id della release su Discogs
@@ -18,11 +20,14 @@ class Album {
     this.coverUrl = '',
   });
 
+  /// Artista mostrato a schermo (tradotto se è il segnaposto "sconosciuto").
+  String get displayArtist => S.artistName(artist);
+
   /// "Artista · 1977 · Vinile"
   String get subtitle => [
-        artist,
+        displayArtist,
         if (year != null) '$year',
-        format,
+        S.formatName(format),
       ].join(' · ');
 
   /// Elemento di /database/search. Il campo `title` ha la forma "Artista - Titolo".

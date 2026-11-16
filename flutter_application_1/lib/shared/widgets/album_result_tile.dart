@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../core/l10n/strings.dart';
 import '../../core/theme/app_theme.dart';
 import '../../models/album.dart';
 import 'cover_image.dart';
@@ -24,12 +25,12 @@ class AlbumResultTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final meta = [
       if (album.year != null) '${album.year}',
-      album.format,
+      S.formatName(album.format),
       if (album.genre.isNotEmpty) album.genre,
     ].join(' · ');
 
     return Padding(
-      padding: const EdgeInsets.only(bottom: 9),
+      padding: EdgeInsets.only(bottom: 9),
       child: Material(
         color: AppColors.panel,
         borderRadius: BorderRadius.circular(8),
@@ -37,7 +38,7 @@ class AlbumResultTile extends StatelessWidget {
           borderRadius: BorderRadius.circular(8),
           onTap: onTap,
           child: Padding(
-            padding: const EdgeInsets.all(10),
+            padding: EdgeInsets.all(10),
             child: Row(
               children: [
                 ClipRRect(
@@ -48,7 +49,7 @@ class AlbumResultTile extends StatelessWidget {
                     child: CoverImage(url: album.coverUrl, title: album.title),
                   ),
                 ),
-                const SizedBox(width: 12),
+                SizedBox(width: 12),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -56,22 +57,22 @@ class AlbumResultTile extends StatelessWidget {
                       Text(album.title,
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
+                          style: TextStyle(
                               color: AppColors.cream, fontWeight: FontWeight.bold, fontSize: 14)),
-                      const SizedBox(height: 3),
-                      Text(album.artist,
+                      SizedBox(height: 3),
+                      Text(album.displayArtist,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(color: AppColors.muted, fontSize: 11)),
-                      const SizedBox(height: 3),
+                          style: TextStyle(color: AppColors.muted, fontSize: 11)),
+                      SizedBox(height: 3),
                       Text(meta,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(color: AppColors.muted, fontSize: 10)),
+                          style: TextStyle(color: AppColors.muted, fontSize: 10)),
                     ],
                   ),
                 ),
-                const SizedBox(width: 8),
+                SizedBox(width: 8),
                 _action(),
               ],
             ),
@@ -84,20 +85,20 @@ class AlbumResultTile extends StatelessWidget {
   Widget _action() {
     if (inLibrary || inWanted) {
       return Text(
-        inLibrary ? '✓ IN LIBRERIA' : '✓ AGGIUNTO',
-        style: const TextStyle(color: AppColors.amber, fontSize: 9, letterSpacing: .5),
+        inLibrary ? S.inLibraryShort : S.addedShort,
+        style: TextStyle(color: AppColors.amber, fontSize: 9, letterSpacing: .5),
       );
     }
     return OutlinedButton(
       onPressed: onAddWanted,
       style: OutlinedButton.styleFrom(
         foregroundColor: AppColors.amber,
-        side: const BorderSide(color: AppColors.amber, width: 1.5),
-        padding: const EdgeInsets.symmetric(horizontal: 8),
-        minimumSize: const Size(0, 30),
+        side: BorderSide(color: AppColors.amber, width: 1.5),
+        padding: EdgeInsets.symmetric(horizontal: 8),
+        minimumSize: Size(0, 30),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
       ),
-      child: const Text('+ DA CERCARE', style: TextStyle(fontSize: 9, letterSpacing: .5)),
+      child: Text(S.addToWanted, style: TextStyle(fontSize: 9, letterSpacing: .5)),
     );
   }
 }

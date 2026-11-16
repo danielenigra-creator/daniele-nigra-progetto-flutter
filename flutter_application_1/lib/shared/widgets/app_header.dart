@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
+
+import '../../core/l10n/strings.dart';
 import '../../core/theme/app_theme.dart';
+import '../../state/settings_store.dart';
+import 'settings_sheet.dart';
 
 class AppHeader extends StatelessWidget {
-  const AppHeader({super.key});
+  final SettingsStore settings;
+  const AppHeader({super.key, required this.settings});
 
   @override
   Widget build(BuildContext context) {
@@ -10,7 +15,7 @@ class AppHeader extends StatelessWidget {
     return Container(
       width: double.infinity,
       color: AppColors.header,
-      padding: const EdgeInsets.fromLTRB(20, 14, 16, 14),
+      padding: const EdgeInsets.fromLTRB(20, 14, 8, 14),
       child: Row(
         children: [
           Container(
@@ -24,18 +29,24 @@ class AppHeader extends StatelessWidget {
               child: Container(
                 width: 10,
                 height: 10,
-                decoration: const BoxDecoration(color: AppColors.amber, shape: BoxShape.circle),
+                decoration: BoxDecoration(color: AppColors.amber, shape: BoxShape.circle),
               ),
             ),
           ),
           const SizedBox(width: 10),
-          const Text.rich(
+          Text.rich(
             TextSpan(children: [
               TextSpan(text: 'Disco', style: TextStyle(color: AppColors.cream)),
               TextSpan(text: 'teca', style: TextStyle(color: AppColors.amber)),
             ]),
-            style: TextStyle(
+            style: const TextStyle(
                 fontSize: 27, fontWeight: FontWeight.bold, fontStyle: FontStyle.italic, fontFamily: 'serif'),
+          ),
+          const Spacer(),
+          IconButton(
+            tooltip: S.settings,
+            icon: Icon(Icons.settings, color: AppColors.cream),
+            onPressed: () => SettingsSheet.show(context, settings),
           ),
         ],
       ),

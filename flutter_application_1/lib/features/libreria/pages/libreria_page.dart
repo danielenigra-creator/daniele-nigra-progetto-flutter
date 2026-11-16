@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../core/l10n/strings.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../models/album.dart';
 import '../../../shared/widgets/album_card.dart';
@@ -22,16 +23,16 @@ class _LibreriaPageState extends State<LibreriaPage> {
     final ok = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Rimuovere il disco?'),
-        content: Text('«${album.title}» verrà tolto dalla libreria.'),
+        title: Text(S.removeTitle),
+        content: Text(S.removeBody(album.title)),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('ANNULLA'),
+            child: Text(S.cancel),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
-            child: const Text('RIMUOVI'),
+            child: Text(S.remove),
           ),
         ],
       ),
@@ -54,18 +55,18 @@ class _LibreriaPageState extends State<LibreriaPage> {
         }).toList();
 
         return Padding(
-          padding: const EdgeInsets.fromLTRB(16, 16, 16, 12),
+          padding: EdgeInsets.fromLTRB(16, 16, 16, 12),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               TextField(
                 onChanged: (value) => setState(() => _query = value),
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                   prefixIcon: Icon(Icons.search, color: AppColors.muted),
-                  hintText: 'Cerca titolo o artista…',
+                  hintText: S.searchTitleArtist,
                 ),
               ),
-              const SizedBox(height: 10),
+              SizedBox(height: 10),
               Wrap(
                 spacing: 8,
                 //aggiunta del formato cassetta
@@ -73,8 +74,8 @@ class _LibreriaPageState extends State<LibreriaPage> {
                   final selected = _filter == item;
                   return ChoiceChip(
                     label: Text(
-                      item,
-                      style: const TextStyle(fontSize: 10, letterSpacing: 1),
+                      S.chip(item),
+                      style: TextStyle(fontSize: 10, letterSpacing: 1),
                     ),
                     selected: selected,
                     onSelected: (_) => setState(() => _filter = item),
@@ -93,17 +94,17 @@ class _LibreriaPageState extends State<LibreriaPage> {
                   );
                 }).toList(),
               ),
-              const SizedBox(height: 14),
+              SizedBox(height: 14),
               Text(
-                '${all.length} dischi in collezione',
-                style: const TextStyle(color: AppColors.muted, fontSize: 11),
+                S.recordsInCollection(all.length),
+                style: TextStyle(color: AppColors.muted, fontSize: 11),
               ),
-              const SizedBox(height: 12),
+              SizedBox(height: 12),
               Expanded(
                 child: all.isEmpty
-                    ? const Center(
+                    ? Center(
                         child: Text(
-                          'La libreria è vuota',
+                          S.libraryEmpty,
                           style: TextStyle(
                             color: AppColors.cream,
                             fontSize: 16,
@@ -111,16 +112,16 @@ class _LibreriaPageState extends State<LibreriaPage> {
                         ),
                       )
                     : albums.isEmpty
-                    ? const Center(
+                    ? Center(
                         child: Text(
-                          'Nessun disco trovato',
+                          S.noRecordsFound,
                           style: TextStyle(color: AppColors.muted),
                         ),
                       )
                     : GridView.builder(
                         itemCount: albums.length,
                         gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
+                            SliverGridDelegateWithFixedCrossAxisCount(
                               crossAxisCount: 2,
                               crossAxisSpacing: 16,
                               mainAxisSpacing: 16,

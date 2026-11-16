@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../core/l10n/strings.dart';
 import '../../core/theme/app_theme.dart';
 import '../../models/album.dart';
 import 'cover_image.dart';
@@ -15,11 +16,11 @@ class AlbumCard extends StatelessWidget {
       onTap: onTap,
       onLongPress: onLongPress,
       child: Container(
-        padding: const EdgeInsets.all(6),
+        padding: EdgeInsets.all(6),
         decoration: BoxDecoration(
-          color: AppColors.cream,
+          color: AppColors.card,
           borderRadius: BorderRadius.circular(3),
-          boxShadow: const [BoxShadow(color: Colors.black54, offset: Offset(4, 4), blurRadius: 0)],
+          boxShadow: [BoxShadow(color: Colors.black54, offset: Offset(4, 4), blurRadius: 0)],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -30,18 +31,18 @@ class AlbumCard extends StatelessWidget {
                 child: CoverImage(url: album.coverUrl, title: album.title),
               ),
             ),
-            const SizedBox(height: 8),
+            SizedBox(height: 8),
             Text(album.title,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
+                style: TextStyle(
                     color: AppColors.brownText, fontWeight: FontWeight.bold, fontSize: 13)),
-            const SizedBox(height: 3),
+            SizedBox(height: 3),
             Text(
-              [album.artist, if (album.year != null) '${album.year}'].join(' · '),
+              [album.displayArtist, if (album.year != null) '${album.year}'].join(' · '),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: const TextStyle(color: Color(0xFF6B5236), fontSize: 9),
+              style: TextStyle(color: Color(0xFF6B5236), fontSize: 9),
             ),
           ],
         ),

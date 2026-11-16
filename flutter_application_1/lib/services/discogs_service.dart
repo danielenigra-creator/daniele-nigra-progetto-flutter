@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 import '../core/config.dart';
+import '../core/l10n/strings.dart';
 import '../models/album.dart';
 import '../models/release_detail.dart';
 
@@ -42,9 +43,7 @@ class DiscogsService {
     final q = query.trim();
     if (q.isEmpty) return [];
     if (!AppConfig.hasToken) {
-      throw const DiscogsException(
-        'Token Discogs mancante. Vedi il README per configurarlo.',
-      );
+      throw DiscogsException(S.errMissingToken);
     }
 
     final json = await _get('/database/search', {
@@ -83,31 +82,29 @@ class DiscogsService {
           .timeout(_timeout);
 
       if (response.statusCode == 401) {
-        throw const DiscogsException('Token Discogs non valido o scaduto.');
+        throw DiscogsException(S.errInvalidToken);
       }
       if (response.statusCode == 404) {
-        throw const DiscogsException('Disco non trovato su Discogs.');
+        throw DiscogsException(S.errNotFound);
       }
       if (response.statusCode == 429) {
-        throw const DiscogsException(
-          'Troppe richieste a Discogs. Aspetta un minuto e riprova.',
-        );
+        throw DiscogsException(S.errTooMany);
       }
       if (response.statusCode != 200) {
-        throw DiscogsException('Errore Discogs (${response.statusCode}).');
+        throw DiscogsException(S.errDiscogs(response.statusCode));
       }
 
       final decoded = jsonDecode(utf8.decode(response.bodyBytes));
       if (decoded is! Map<String, dynamic>) {
-        throw const DiscogsException('Risposta di Discogs non valida.');
+        throw DiscogsException(S.errInvalidResponse);
       }
       return decoded;
     } on TimeoutException {
-      throw const DiscogsException('Discogs non risponde. Riprova.');
+      throw DiscogsException(S.errTimeout);
     } on http.ClientException {
-      throw const DiscogsException('Nessuna connessione a internet.');
+      throw DiscogsException(S.errOffline);
     } on FormatException {
-      throw const DiscogsException('Risposta di Discogs non valida.');
+      throw DiscogsException(S.errInvalidResponse);
     }
   }
 }

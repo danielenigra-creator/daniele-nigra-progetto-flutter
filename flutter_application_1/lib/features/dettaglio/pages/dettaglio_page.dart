@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../core/l10n/strings.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../models/album.dart';
 import '../../../models/release_detail.dart';
@@ -46,15 +47,15 @@ class _DettaglioPageState extends State<DettaglioPage> {
       appBar: AppBar(
         backgroundColor: AppColors.header,
         foregroundColor: AppColors.cream,
-        title: const Text('DETTAGLIO', style: TextStyle(fontSize: 13, letterSpacing: 2)),
+        title: Text(S.details, style: TextStyle(fontSize: 13, letterSpacing: 2)),
       ),
       body: SafeArea(
         child: ListView(
-          padding: const EdgeInsets.all(16),
+          padding: EdgeInsets.all(16),
           children: [
             Center(
               child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 260),
+                constraints: BoxConstraints(maxWidth: 260),
                 child: AspectRatio(
                   aspectRatio: 1,
                   child: ClipRRect(
@@ -64,23 +65,23 @@ class _DettaglioPageState extends State<DettaglioPage> {
                 ),
               ),
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: 16),
             Text(album.title,
                 textAlign: TextAlign.center,
-                style: const TextStyle(
+                style: TextStyle(
                     fontSize: 22, fontWeight: FontWeight.bold, color: AppColors.cream, fontFamily: 'serif')),
-            const SizedBox(height: 6),
+            SizedBox(height: 6),
             Text(album.subtitle,
                 textAlign: TextAlign.center,
-                style: const TextStyle(color: AppColors.muted, fontSize: 12)),
-            const SizedBox(height: 16),
+                style: TextStyle(color: AppColors.muted, fontSize: 12)),
+            SizedBox(height: 16),
             _buildActions(),
-            const SizedBox(height: 16),
+            SizedBox(height: 16),
             FutureBuilder<ReleaseDetail>(
               future: _future,
               builder: (context, snapshot) {
                 if (snapshot.connectionState != ConnectionState.done) {
-                  return const Padding(
+                  return Padding(
                     padding: EdgeInsets.all(24),
                     child: Center(child: CircularProgressIndicator()),
                   );
@@ -88,7 +89,7 @@ class _DettaglioPageState extends State<DettaglioPage> {
                 if (snapshot.hasError) {
                   final error = snapshot.error;
                   return ErrorView(
-                    message: error is DiscogsException ? error.message : 'Errore imprevisto.',
+                    message: error is DiscogsException ? error.message : S.unexpectedError,
                     onRetry: _retry,
                   );
                 }
@@ -120,17 +121,17 @@ class _DettaglioPageState extends State<DettaglioPage> {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: inLibrary ? AppColors.panelLight : AppColors.amber,
                   foregroundColor: inLibrary ? AppColors.cream : AppColors.brownText,
-                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  padding: EdgeInsets.symmetric(vertical: 12),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
                 ),
                 child: Text(
-                  inLibrary ? '✓ IN LIBRERIA · RIMUOVI' : 'AGGIUNGI ALLA LIBRERIA',
-                  style: const TextStyle(fontWeight: FontWeight.bold, letterSpacing: 1, fontSize: 12),
+                  inLibrary ? S.inLibraryRemove : S.addToLibrary,
+                  style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: 1, fontSize: 12),
                 ),
               ),
             ),
             if (!inLibrary) ...[
-              const SizedBox(height: 8),
+              SizedBox(height: 8),
               SizedBox(
                 width: double.infinity,
                 child: OutlinedButton(
@@ -138,13 +139,13 @@ class _DettaglioPageState extends State<DettaglioPage> {
                       inWanted ? store.removeFromWanted(album.id) : store.addToWanted(album),
                   style: OutlinedButton.styleFrom(
                     foregroundColor: AppColors.amber,
-                    side: const BorderSide(color: AppColors.amber, width: 1.5),
-                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    side: BorderSide(color: AppColors.amber, width: 1.5),
+                    padding: EdgeInsets.symmetric(vertical: 12),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
                   ),
                   child: Text(
-                    inWanted ? '✓ DA CERCARE · RIMUOVI' : '+ DA CERCARE',
-                    style: const TextStyle(letterSpacing: 1, fontSize: 12),
+                    inWanted ? S.wantedRemove : S.addToWanted,
+                    style: TextStyle(letterSpacing: 1, fontSize: 12),
                   ),
                 ),
               ),
@@ -174,39 +175,38 @@ class _DetailBody extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         if (info.isNotEmpty)
-          Text(info.join(' · '), style: const TextStyle(color: AppColors.muted, fontSize: 11)),
+          Text(info.join(' · '), style: TextStyle(color: AppColors.muted, fontSize: 11)),
         if (detail.lowestPrice != null) ...[
-          const SizedBox(height: 8),
+          SizedBox(height: 8),
           Text(
-            'Mercato Discogs: da \$${detail.lowestPrice!.toStringAsFixed(2)}'
-            '${detail.numForSale != null ? ' · ${detail.numForSale} in vendita' : ''}',
-            style: const TextStyle(color: AppColors.amber, fontSize: 11),
+            S.market(detail.lowestPrice!.toStringAsFixed(2), detail.numForSale),
+            style: TextStyle(color: AppColors.amber, fontSize: 11),
           ),
         ],
-        const SizedBox(height: 16),
-        const Text('BRANI', style: TextStyle(color: AppColors.amber, letterSpacing: 1, fontSize: 10)),
-        const Divider(color: AppColors.border),
+        SizedBox(height: 16),
+        Text(S.tracks, style: TextStyle(color: AppColors.amber, letterSpacing: 1, fontSize: 10)),
+        Divider(color: AppColors.border),
         if (detail.tracks.isEmpty)
-          const Padding(
+          Padding(
             padding: EdgeInsets.symmetric(vertical: 8),
-            child: Text('Tracklist non disponibile.', style: TextStyle(color: AppColors.muted)),
+            child: Text(S.noTracklist, style: TextStyle(color: AppColors.muted)),
           )
         else
           for (final track in detail.tracks)
             Padding(
-              padding: const EdgeInsets.symmetric(vertical: 6),
+              padding: EdgeInsets.symmetric(vertical: 6),
               child: Row(
                 children: [
                   SizedBox(
                     width: 36,
                     child: Text(track.position,
-                        style: const TextStyle(color: AppColors.muted, fontSize: 12)),
+                        style: TextStyle(color: AppColors.muted, fontSize: 12)),
                   ),
                   Expanded(
                     child: Text(track.title,
-                        style: const TextStyle(color: AppColors.cream, fontSize: 14)),
+                        style: TextStyle(color: AppColors.cream, fontSize: 14)),
                   ),
-                  Text(track.duration, style: const TextStyle(color: AppColors.muted, fontSize: 11)),
+                  Text(track.duration, style: TextStyle(color: AppColors.muted, fontSize: 11)),
                 ],
               ),
             ),

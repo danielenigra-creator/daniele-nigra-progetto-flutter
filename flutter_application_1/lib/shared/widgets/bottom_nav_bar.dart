@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../core/l10n/strings.dart';
 import '../../core/theme/app_theme.dart';
 
 class BottomNavBar extends StatelessWidget {
@@ -6,10 +7,10 @@ class BottomNavBar extends StatelessWidget {
   final ValueChanged<int> onTap;
   const BottomNavBar({super.key, required this.currentIndex, required this.onTap});
 
-  static const _items = [
-    (Icons.album_outlined, 'LIBRERIA'),
-    (Icons.queue_music, 'DA CERCARE'),
-    (Icons.search, 'CERCA'),
+  static List<(IconData, String)> get _items => [
+    (Icons.album_outlined, S.navLibrary),
+    (Icons.queue_music, S.navWanted),
+    (Icons.search, S.navSearch),
   ];
 
   @override
@@ -20,7 +21,7 @@ class BottomNavBar extends StatelessWidget {
         top: false,
         child: Container(
           height: 72,
-          decoration: const BoxDecoration(
+          decoration: BoxDecoration(
             border: Border(top: BorderSide(color: AppColors.amber, width: 2)),
           ),
           child: Row(
@@ -31,7 +32,7 @@ class BottomNavBar extends StatelessWidget {
                 child: InkWell(
                   onTap: () => onTap(index),
                   child: Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 5, vertical: 6),
+                    margin: EdgeInsets.symmetric(horizontal: 5, vertical: 6),
                     decoration: BoxDecoration(
                       color: selected ? AppColors.panelLight : Colors.transparent,
                       borderRadius: BorderRadius.circular(8),
@@ -40,7 +41,7 @@ class BottomNavBar extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Icon(item.$1, size: 23, color: selected ? AppColors.amber : AppColors.muted),
-                        const SizedBox(height: 4),
+                        SizedBox(height: 4),
                         Text(item.$2,
                             style: TextStyle(
                                 fontSize: 8,
