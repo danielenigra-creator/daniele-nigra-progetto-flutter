@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../../core/theme/app_theme.dart';
 
 class RecordCrate extends StatelessWidget {
@@ -8,12 +9,16 @@ class RecordCrate extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 190,
+      height: 210, // il disco arriva a 198: serve spazio per non tagliarlo
       child: Stack(
+        clipBehavior: Clip.none, // non taglia ciò che esce dal contenitore
         alignment: Alignment.bottomCenter,
         children: [
           Positioned(
-            bottom: 0, left: 0, right: 0, height: 58,
+            bottom: 0,
+            left: 0,
+            right: 0,
+            height: 58,
             child: Container(
               decoration: BoxDecoration(
                 color: Color(0xFF8A542B),
@@ -21,14 +26,18 @@ class RecordCrate extends StatelessWidget {
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: List.generate(19, (_) => Container(width: 4, color: Color(0xFF5B351D))),
+                children: List.generate(
+                  19,
+                  (_) => Container(width: 4, color: Color(0xFF5B351D)),
+                ),
               ),
             ),
           ),
           Positioned(
             bottom: 48,
             child: Container(
-              width: 150, height: 150,
+              width: 150,
+              height: 150,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: Color(0xFF171311),
@@ -37,14 +46,35 @@ class RecordCrate extends StatelessWidget {
               ),
               child: Center(
                 child: Container(
-                  width: 48, height: 48,
-                  decoration: BoxDecoration(shape: BoxShape.circle, color: AppColors.amber, border: Border.all(color: AppColors.onWood, width: 3)),
-                  child: Center(child: Icon(Icons.album, color: AppColors.brownText, size: 22)),
+                  width: 48,
+                  height: 48,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: AppColors.amber,
+                    border: Border.all(color: AppColors.onWood, width: 3),
+                  ),
+                  child: Center(
+                    child: Icon(
+                      Icons.album,
+                      color: AppColors.brownText,
+                      size: 22,
+                    ),
+                  ),
                 ),
               ),
             ),
           ),
-          Positioned(bottom: 17, child: Text(label, style: TextStyle(color: AppColors.onWood, fontWeight: FontWeight.bold, letterSpacing: 2))),
+          Positioned(
+            bottom: 17,
+            child: Text(
+              label,
+              style: TextStyle(
+                color: AppColors.onWood,
+                fontWeight: FontWeight.bold,
+                letterSpacing: 2,
+              ),
+            ),
+          ),
         ],
       ),
     );

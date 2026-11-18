@@ -42,7 +42,7 @@ class DiscotecaApp extends StatelessWidget {
 
 /// Struttura principale: header + 3 schede con barra di navigazione in basso.
 class HomeShell extends StatefulWidget {
-  final CollectionStore store;
+  final CollectionStore store;  
   final SettingsStore settings;
   const HomeShell({super.key, required this.store, required this.settings});
 

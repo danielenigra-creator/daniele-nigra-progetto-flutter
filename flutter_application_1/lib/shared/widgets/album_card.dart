@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../core/l10n/strings.dart';
+//import '../../core/l10n/strings.dart';
 import '../../core/theme/app_theme.dart';
 import '../../models/album.dart';
 import 'cover_image.dart';
