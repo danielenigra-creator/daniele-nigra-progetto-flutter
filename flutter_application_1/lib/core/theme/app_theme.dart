@@ -6,29 +6,29 @@ import 'package:flutter/material.dart';
 class AppColors {
   /// true = tema chiaro, false = tema marrone (default).
   static bool light = false;
-
   static Color get background =>
-      light ? const Color(0xFFF6EFE0) : const Color(0xFF1F1510);
+      light ? const Color(0xFFE8DABC) : const Color(0xFF1F1510);
   static Color get header =>
-      light ? const Color(0xFFEBDFC6) : const Color(0xFF140D09);
+      light ? const Color(0xFFD8C6A0) : const Color(0xFF140D09);
   static Color get panel =>
-      light ? const Color(0xFFFFFBF2) : const Color(0xFF2E2018);
+      light ? const Color(0xFFEFE3C9) : const Color(0xFF2E2018);
   static Color get panelLight =>
-      light ? const Color(0xFFEFE4CC) : const Color(0xFF3D2B20);
+      light ? const Color(0xFFDCCBA6) : const Color(0xFF3D2B20);
   static Color get border =>
-      light ? const Color(0xFFD3C3A2) : const Color(0xFF5A4030);
+      light ? const Color(0xFFB8A07A) : const Color(0xFF5A4030);
 
-  /// Colore del testo principale (crema sul marrone, marrone scuro sul chiaro).
   static Color get cream =>
       light ? const Color(0xFF2A1A12) : const Color(0xFFF1E3C3);
   static Color get amber =>
-      light ? const Color(0xFFB06A00) : const Color(0xFFF0A830);
+      light ? const Color(0xFFA86500) : const Color(0xFFF0A830);
   static Color get muted =>
-      light ? const Color(0xFF7A6347) : const Color(0xFFC2A982);
+      light ? const Color(0xFF6B5538) : const Color(0xFFC2A982);
 
-  /// Sfondo delle copertine nella griglia della libreria.
   static Color get card =>
-      light ? const Color(0xFFFFFDF7) : const Color(0xFFF1E3C3);
+      light ? const Color(0xFFF4EAD3) : const Color(0xFFF1E3C3);
+
+  static Color get onAmber =>
+      light ? const Color(0xFF2A1A12) : const Color(0xFF2A1A12);
 
   // Colori fissi (uguali in entrambi i temi)
   static const brownText = Color(0xFF2A1A12);
@@ -70,7 +70,10 @@ class AppTheme {
         filled: true,
         fillColor: AppColors.panel,
         hintStyle: TextStyle(color: AppColors.muted, fontSize: 13),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 14,
+          vertical: 11,
+        ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(6),
           borderSide: BorderSide(color: AppColors.border, width: 2),

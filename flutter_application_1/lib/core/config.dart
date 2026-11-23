@@ -1,3 +1,4 @@
+//api DISCOGS
 class AppConfig {
   static const String discogsToken = String.fromEnvironment(
     'DISCOGS_TOKEN',
