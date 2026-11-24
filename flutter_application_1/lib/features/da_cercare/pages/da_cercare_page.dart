@@ -76,7 +76,9 @@ class _DaCercarePageState extends State<DaCercarePage> {
               onTap: current == null
                   ? null
                   : () => DettaglioPage.open(context, current, store),
-              child: RecordCrate(label: S.navWanted),
+             //Qui mi mostra la copertina dell'album da cercare
+             //Nella pagina da cercare.
+              child: RecordCrate(label: S.navWanted, album: current),
             ),
             SizedBox(height: 16),
             if (current == null) ...[

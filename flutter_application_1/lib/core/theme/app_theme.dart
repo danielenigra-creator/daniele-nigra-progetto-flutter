@@ -33,7 +33,7 @@ class AppColors {
   // Colori fissi (uguali in entrambi i temi)
   static const brownText = Color(0xFF2A1A12);
 
-  /// Testo chiaro da usare sopra superfici sempre scure/marroni (es. la cassa dei dischi).
+  /// Testo chiaro da usare sopra superfici sempre scure/marroni
   static const onWood = Color(0xFFF1E3C3);
 }
 

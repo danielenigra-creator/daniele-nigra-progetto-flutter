@@ -1,13 +1,63 @@
 import 'package:flutter/material.dart';
 
 import '../../core/theme/app_theme.dart';
+import '../../models/album.dart';
+import 'cover_image.dart';
 
+/// Cassa dei dischi. Se [album] è indicato mostra la sua copertina al posto
+/// del disco; se è null (lista vuota) mostra il disco nero.
 class RecordCrate extends StatelessWidget {
   final String label;
-  const RecordCrate({super.key, this.label = 'DISCHI'});
+  final Album? album;
+  const RecordCrate({super.key, this.label = 'DISCHI', this.album});
+
+  /// Disco nero (quando non c'è nessun album da mostrare).
+  Widget _disc() {
+    return Container(
+      key: ValueKey('disc'),
+      width: 150,
+      height: 150,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: Color(0xFF171311),
+        border: Border.all(color: AppColors.muted, width: 5),
+        boxShadow: [BoxShadow(color: Colors.black54, blurRadius: 8)],
+      ),
+      child: Center(
+        child: Container(
+          width: 48,
+          height: 48,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: AppColors.amber,
+            border: Border.all(color: AppColors.onWood, width: 3),
+          ),
+          child: Center(
+            child: Icon(Icons.album, color: AppColors.onAmber, size: 22),
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// Copertina dell'album scelto, nello stesso punto del disco.
+  Widget _cover(Album a) {
+    return Container(
+      key: ValueKey(a.id),
+      width: 150,
+      height: 150,
+      decoration: BoxDecoration(
+        color: AppColors.panelLight,
+        border: Border.all(color: AppColors.onWood, width: 4),
+        boxShadow: [BoxShadow(color: Colors.black54, blurRadius: 8)],
+      ),
+      child: CoverImage(url: a.coverUrl, title: a.title),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
+    final current = album;
     return SizedBox(
       height: 210, // il disco arriva a 198: serve spazio per non tagliarlo
       child: Stack(
@@ -35,33 +85,10 @@ class RecordCrate extends StatelessWidget {
           ),
           Positioned(
             bottom: 48,
-            child: Container(
-              width: 150,
-              height: 150,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Color(0xFF171311),
-                border: Border.all(color: AppColors.muted, width: 5),
-                boxShadow: [BoxShadow(color: Colors.black54, blurRadius: 8)],
-              ),
-              child: Center(
-                child: Container(
-                  width: 48,
-                  height: 48,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: AppColors.amber,
-                    border: Border.all(color: AppColors.onWood, width: 3),
-                  ),
-                  child: Center(
-                    child: Icon(
-                      Icons.album,
-                      color: AppColors.brownText,
-                      size: 22,
-                    ),
-                  ),
-                ),
-              ),
+            // Dissolvenza quando cambia l'album scelto
+            child: AnimatedSwitcher(
+              duration: Duration(milliseconds: 250),
+              child: current == null ? _disc() : _cover(current),
             ),
           ),
           Positioned(
